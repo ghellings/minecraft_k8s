@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minecraft
+  labels:
+    app: minecraft
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minecraft
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: minecraft
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 2000
+      containers:
+      - name: minecraft
+        image: itzg/minecraft-server:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 500m
+          limits:
+            memory: 1024Mi
+            cpu: 1000m  
+        readinessProbe:
+          exec:
+            command:
+              - mc-monitor
+              - status
+              - localhost:25565
+          initialDelaySeconds: 120
+          periodSeconds: 5
+          failureThreshold: 10 
+          successThreshold: 1
+          timeoutSeconds: 1
+        livenessProbe:
+          exec:
+            command:
+              - mc-monitor
+              - status
+              - localhost:25565
+          initialDelaySeconds: 120
+          periodSeconds: 5
+          failureThreshold: 10 
+          successThreshold: 1
+          timeoutSeconds: 1
+        envFrom:
+          - configMapRef:
+              name: minecraft
+          - secretRef:
+              name: minecraft
+        ports:
+        - containerPort: 25565
+          protocol: TCP
+        - containerPort: 28016 
+          protocol: TCP
+        volumeMounts:
+        - name: datadir
+          mountPath: /data
+      volumes:
+      - name: datadir
+        persistentVolumeClaim:
+          claimName: minecraft-datadir

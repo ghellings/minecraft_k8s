@@ -1,0 +1,16 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: minecraft
+data:
+  EULA: "TRUE"
+  TYPE: "VANILLA"
+  FTB_LEGACYJAVAFIXER: "false"
+  VERSION: "1.14.4"
+  DIFFICULTY: "easy"
+  MAX_PLAYERS: "20"
+  FORCE_REDOWNLOAD: "TRUE"
+  REMOVE_OLD_MODS: "TRUE"
+  ENABLE_RCON: "true"
+  ENABLE_QUERY: "true"
+  QUERY_PORT: "25565"
